@@ -1,0 +1,806 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reasoning & Aptitude Mock Test - UGC NET</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .scrollbar-hide::-webkit-scrollbar { display: none; }
+        .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+        .option-label:hover { border-color: #0ea5e9; background-color: #f0f9ff; }
+        .option-selected { border-color: #0284c7; background-color: #e0f2fe; box-shadow: 0 0 0 2px #0284c7; }
+        .grid-btn-answered { background-color: #10b981; color: white; border-color: #10b981; }
+        .grid-btn-current { border-color: #0ea5e9; box-shadow: 0 0 0 2px #0ea5e9; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 h-screen flex flex-col overflow-hidden">
+
+    <header class="bg-white shadow-sm z-10 flex-shrink-0">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-sky-600 rounded-lg flex items-center justify-center text-white font-bold text-xl shadow-md">
+                    <i class="fa-solid fa-brain"></i>
+                </div>
+                <h1 class="font-bold text-xl text-slate-800 hidden sm:block">Reasoning & Aptitude Mock</h1>
+                <h1 class="font-bold text-lg text-slate-800 sm:hidden">Reasoning Mock</h1>
+            </div>
+            <div id="header-timer-container" class="hidden flex items-center gap-2 bg-slate-100 px-4 py-2 rounded-full border border-slate-200">
+                <i class="fa-regular fa-clock text-sky-600"></i>
+                <span id="header-timer" class="font-semibold text-slate-700 tracking-wider">60:00</span>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow flex overflow-hidden relative">
+        
+        <div id="start-screen" class="absolute inset-0 bg-slate-50 flex items-center justify-center z-20 overflow-y-auto p-4">
+            <div class="bg-white max-w-2xl w-full rounded-2xl shadow-xl p-8 border border-slate-100">
+                <div class="text-center mb-8">
+                    <div class="w-20 h-20 bg-sky-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fa-solid fa-puzzle-piece text-4xl text-sky-600"></i>
+                    </div>
+                    <h2 class="text-3xl font-bold text-slate-800 mb-2">Mathematical Reasoning & Aptitude</h2>
+                    <p class="text-slate-500">Comprehensive Mock Test for NTA UGC NET JRF (Unit V)</p>
+                </div>
+                
+                <div class="bg-slate-50 rounded-xl p-6 mb-8 border border-slate-200">
+                    <h3 class="font-semibold text-slate-700 mb-4 flex items-center gap-2">
+                        <i class="fa-solid fa-list-check text-sky-500"></i> Instructions
+                    </h3>
+                    <ul class="space-y-3 text-sm text-slate-600">
+                        <li class="flex items-start gap-2"><i class="fa-solid fa-check text-green-500 mt-1"></i> This test contains <strong>50 multiple-choice questions</strong> strictly based on Unit V.</li>
+                        <li class="flex items-start gap-2"><i class="fa-solid fa-check text-green-500 mt-1"></i> Total time allotted is <strong>60 minutes</strong>.</li>
+                        <li class="flex items-start gap-2"><i class="fa-solid fa-check text-green-500 mt-1"></i> Detailed <strong>explanations</strong> will be provided at the end of the test.</li>
+                        <li class="flex items-start gap-2"><i class="fa-solid fa-check text-green-500 mt-1"></i> The test will auto-submit when the timer runs out.</li>
+                    </ul>
+                </div>
+                
+                <button onclick="startTest()" class="w-full bg-sky-600 hover:bg-sky-700 text-white font-semibold py-4 rounded-xl shadow-lg shadow-sky-200 transition-all transform hover:-translate-y-1 text-lg flex items-center justify-center gap-2">
+                    Start Mock Test <i class="fa-solid fa-arrow-right"></i>
+                </button>
+            </div>
+        </div>
+
+        <div id="quiz-screen" class="hidden w-full h-full flex flex-col md:flex-row">
+            
+            <div class="flex-grow flex flex-col h-full overflow-hidden">
+                <div class="h-1 bg-slate-200 w-full">
+                    <div id="progress-bar" class="h-full bg-sky-500 transition-all duration-300 w-0"></div>
+                </div>
+
+                <div class="flex-grow overflow-y-auto p-4 sm:p-6 lg:p-10 scrollbar-hide">
+                    <div class="max-w-4xl mx-auto">
+                        <div class="flex justify-between items-center mb-6">
+                            <span id="question-number-badge" class="bg-sky-100 text-sky-800 text-sm font-semibold px-3 py-1 rounded-full border border-sky-200">
+                                Question 1 of 50
+                            </span>
+                            <span class="text-sm text-slate-500 font-medium">Marks: +2 / -0</span>
+                        </div>
+                        
+                        <h2 id="question-text" class="text-xl sm:text-2xl font-semibold text-slate-800 mb-8 leading-relaxed whitespace-pre-line">
+                            Loading question...
+                        </h2>
+
+                        <div id="options-container" class="space-y-4">
+                            <!-- Options injected via JS -->
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white border-t border-slate-200 p-4 sm:p-6 flex items-center justify-between shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
+                    <button onclick="prevQuestion()" id="btn-prev" class="px-6 py-2.5 rounded-lg border-2 border-slate-200 text-slate-600 font-medium hover:bg-slate-50 hover:border-slate-300 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                        <i class="fa-solid fa-angle-left mr-2"></i> Previous
+                    </button>
+                    
+                    <button onclick="nextQuestion()" id="btn-next" class="px-6 py-2.5 rounded-lg bg-sky-600 text-white font-medium hover:bg-sky-700 shadow-md shadow-sky-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                        Save & Next <i class="fa-solid fa-angle-right ml-2"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="w-full md:w-80 bg-white border-l border-slate-200 flex flex-col h-64 md:h-full flex-shrink-0 shadow-[-4px_0_15px_-3px_rgba(0,0,0,0.05)] z-10 relative">
+                <div class="p-4 border-b border-slate-200 bg-slate-50 flex justify-between items-center md:block md:bg-white">
+                    <h3 class="font-semibold text-slate-700 hidden md:block mb-2">Question Palette</h3>
+                    
+                    <button id="mobile-grid-toggle" class="md:hidden flex items-center gap-2 text-sky-600 font-medium" onclick="toggleMobileGrid()">
+                        <i class="fa-solid fa-table-cells"></i> Show Palette
+                    </button>
+                    
+                    <div class="flex gap-4 text-xs font-medium text-slate-500 md:mt-3">
+                        <div class="flex items-center gap-1"><span class="w-3 h-3 rounded-full bg-emerald-500"></span> Answered</div>
+                        <div class="flex items-center gap-1"><span class="w-3 h-3 rounded-full border border-slate-300"></span> Unanswered</div>
+                    </div>
+                </div>
+
+                <div id="grid-container" class="flex-grow overflow-y-auto p-4 bg-slate-50 md:bg-white hidden md:block absolute md:relative top-full left-0 w-full md:w-auto h-[300px] md:h-auto border-b md:border-b-0 border-slate-200 shadow-lg md:shadow-none z-20">
+                    <div id="question-grid" class="grid grid-cols-5 gap-2 sm:gap-3">
+                        <!-- Grid buttons injected via JS -->
+                    </div>
+                </div>
+
+                <div class="p-4 border-t border-slate-200 mt-auto bg-white">
+                    <button onclick="confirmSubmit()" class="w-full py-3 bg-emerald-500 hover:bg-emerald-600 text-white font-bold rounded-lg shadow-md shadow-emerald-200 transition-colors flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-check-double"></i> Submit Final Test
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div id="results-screen" class="hidden absolute inset-0 bg-slate-50 z-30 overflow-y-auto">
+            <div class="max-w-4xl mx-auto p-4 sm:p-8">
+                <div class="bg-white rounded-2xl shadow-xl border border-slate-200 p-8 text-center mb-8 relative overflow-hidden">
+                    <div class="absolute top-0 left-0 w-full h-2 bg-sky-500"></div>
+                    <h2 class="text-3xl font-bold text-slate-800 mb-2">Test Completed!</h2>
+                    <p class="text-slate-500 mb-6">Here is your detailed performance analysis.</p>
+                    
+                    <div class="flex flex-wrap justify-center gap-6 sm:gap-12">
+                        <div class="flex flex-col items-center">
+                            <div class="w-24 h-24 rounded-full border-4 border-sky-100 flex items-center justify-center mb-2">
+                                <span id="score-text" class="text-3xl font-bold text-sky-600">0</span>
+                            </div>
+                            <span class="text-sm font-medium text-slate-600">Total Score (Out of 100)</span>
+                        </div>
+                        
+                        <div class="flex flex-col justify-center gap-4 text-left border-l border-slate-200 pl-6 sm:pl-12">
+                            <div class="flex items-center gap-3">
+                                <span class="w-8 h-8 rounded bg-emerald-100 text-emerald-600 flex items-center justify-center"><i class="fa-solid fa-check"></i></span>
+                                <div>
+                                    <div id="correct-count" class="font-bold text-slate-800 text-lg">0</div>
+                                    <div class="text-xs text-slate-500 uppercase tracking-wide">Correct</div>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <span class="w-8 h-8 rounded bg-red-100 text-red-600 flex items-center justify-center"><i class="fa-solid fa-xmark"></i></span>
+                                <div>
+                                    <div id="incorrect-count" class="font-bold text-slate-800 text-lg">0</div>
+                                    <div class="text-xs text-slate-500 uppercase tracking-wide">Incorrect</div>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <span class="w-8 h-8 rounded bg-slate-100 text-slate-600 flex items-center justify-center"><i class="fa-solid fa-minus"></i></span>
+                                <div>
+                                    <div id="skipped-count" class="font-bold text-slate-800 text-lg">0</div>
+                                    <div class="text-xs text-slate-500 uppercase tracking-wide">Skipped</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <h3 class="text-xl font-bold text-slate-800 mb-6 flex items-center gap-2">
+                    <i class="fa-solid fa-book-open text-sky-500"></i> Detailed Review & Explanations
+                </h3>
+                <div id="review-container" class="space-y-6">
+                    <!-- Review cards injected via JS -->
+                </div>
+                
+                <div class="mt-12 text-center pb-12">
+                    <button onclick="location.reload()" class="px-8 py-3 bg-sky-600 text-white font-semibold rounded-lg hover:bg-sky-700 shadow-lg shadow-sky-200 transition-all">
+                        Take Test Again
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div id="custom-modal" class="hidden absolute inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+            <div class="bg-white rounded-2xl shadow-2xl max-w-sm w-full p-6 transform transition-all scale-95 opacity-0" id="modal-content">
+                <div class="w-12 h-12 rounded-full bg-amber-100 text-amber-600 flex items-center justify-center mx-auto mb-4 text-xl">
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+                </div>
+                <h3 class="text-xl font-bold text-center text-slate-800 mb-2" id="modal-title">Confirm Submit</h3>
+                <p class="text-center text-slate-500 mb-6" id="modal-desc">Are you sure you want to submit the test?</p>
+                <div class="flex gap-3">
+                    <button onclick="closeModal()" class="flex-1 py-2.5 rounded-lg border border-slate-300 text-slate-700 font-medium hover:bg-slate-50">Cancel</button>
+                    <button onclick="executeSubmit()" class="flex-1 py-2.5 rounded-lg bg-sky-600 text-white font-medium hover:bg-sky-700 shadow-md">Submit Test</button>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <script>
+        const quizData = [
+            {
+                q: "Find the next number in the series: 3, 11, 23, 39, 59, ?",
+                options: ["79", "81", "83", "87"],
+                ans: 2,
+                explanation: "The differences between consecutive terms are 8, 12, 16, 20. These differences increase by 4 each time. The next difference should be 20 + 4 = 24. Therefore, 59 + 24 = 83."
+            },
+            {
+                q: "Find the next number in the series: 2, 9, 28, 65, 126, ?",
+                options: ["195", "217", "216", "232"],
+                ans: 1,
+                explanation: "The terms follow the pattern of cubes plus one: (1³ + 1) = 2, (2³ + 1) = 9, (3³ + 1) = 28, (4³ + 1) = 65, (5³ + 1) = 126. The next term is (6³ + 1) = 216 + 1 = 217."
+            },
+            {
+                q: "Find the missing number in the series: 0, 6, 24, 60, 120, ?",
+                options: ["180", "196", "210", "216"],
+                ans: 2,
+                explanation: "The pattern is n³ - n. (1³ - 1) = 0, (2³ - 2) = 6, (3³ - 3) = 24, (4³ - 4) = 60, (5³ - 5) = 120. The next term is (6³ - 6) = 216 - 6 = 210."
+            },
+            {
+                q: "Find the next term in the letter series: BZA, DYC, FXE, ?",
+                options: ["HWG", "HUG", "GWF", "HVG"],
+                ans: 0,
+                explanation: "First letter: B, D, F, H (+2). Second letter: Z, Y, X, W (-1). Third letter: A, C, E, G (+2). The next term is HWG."
+            },
+            {
+                q: "Find the next term in the series: WFB, TGD, QHG, ?",
+                options: ["NIJ", "NIK", "NJK", "OIK"],
+                ans: 1,
+                explanation: "First letter: W, T, Q, N (-3). Second letter: F, G, H, I (+1). Third letter: B, D, G, K (+2, +3, +4). So the term is NIK."
+            },
+            {
+                q: "If PAINT is coded as 74128 and EXCEL is coded as 93596, how is ACCEPT coded?",
+                options: ["455978", "455972", "455798", "455987"],
+                ans: 0,
+                explanation: "By direct substitution from the given words: A = 4, C = 5, C = 5, E = 9, P = 7, T = 8. Therefore, ACCEPT = 455978."
+            },
+            {
+                q: "If in a certain language, DELHI is coded as CCIDD, how is BOMBAY coded in that language?",
+                options: ["AMJXVS", "AMJWVS", "AMJXVT", "ZLJXVS"],
+                ans: 0,
+                explanation: "The pattern shifts backward progressively: D(-1)=C, E(-2)=C, L(-3)=I, H(-4)=D, I(-5)=D. Applying to BOMBAY: B(-1)=A, O(-2)=M, M(-3)=J, B(-4)=X, A(-5)=V, Y(-6)=S. Result: AMJXVS."
+            },
+            {
+                q: "If A = 1, CAT = 24, then POLICE = ?",
+                options: ["57", "60", "62", "64"],
+                ans: 1,
+                explanation: "The code is the sum of alphabetical positions: P(16) + O(15) + L(12) + I(9) + C(3) + E(5) = 60."
+            },
+            {
+                q: "Pointing to a photograph of a boy, Suresh said, 'He is the son of the only son of my mother.' How is Suresh related to that boy?",
+                options: ["Brother", "Uncle", "Cousin", "Father"],
+                ans: 3,
+                explanation: "The 'only son of my mother' is Suresh himself. Therefore, the boy in the photograph is the son of Suresh. Suresh is the boy's father."
+            },
+            {
+                q: "If A + B means A is the brother of B; A x B means A is the father of B; A - B means A is the sister of B, which of the following represents that 'C is the uncle of D'?",
+                options: ["C + P x D", "C - P x D", "P + C x D", "P x C - D"],
+                ans: 0,
+                explanation: "In 'C + P x D', C + P means C is the brother of P. P x D means P is the father of D. Since C is the brother of D's father (P), C is the uncle of D."
+            },
+            {
+                q: "Six members of a family A, B, C, D, E, and F are traveling together. B is the son of C, but C is not the mother of B. A and C are a married couple. E is the brother of C. D is the daughter of A. F is the brother of B. How many male members are there in the family?",
+                options: ["1", "2", "3", "4"],
+                ans: 3,
+                explanation: "C is not the mother of B, so C is the father (Male). A is the mother (Female). B is the son (Male). E is the brother of C (Male). D is the daughter of A (Female). F is the brother of B (Male). Male members: C, B, E, F. Total = 4."
+            },
+            {
+                q: "A man faces North. He turns 135 degrees in the clockwise direction and then 180 degrees in the anti-clockwise direction. Which direction is he facing now?",
+                options: ["North-East", "North-West", "South-East", "South-West"],
+                ans: 1,
+                explanation: "Net turn = 180 (anti-clockwise) - 135 (clockwise) = 45 degrees anti-clockwise. Starting from North, a 45-degree anti-clockwise turn brings him to North-West."
+            },
+            {
+                q: "Rajan walked 20 m towards East, turned right and walked 10 m, then turned right and walked 20 m, and finally turned left and walked 10 m. In which direction is he now from his starting point?",
+                options: ["East", "West", "North", "South"],
+                ans: 3,
+                explanation: "He goes 20m East, turns right (South) for 10m, turns right (West) for 20m. He is now directly South of his starting point by 10m. He turns left (South) and walks 10m more. His final position is directly South of his start."
+            },
+            {
+                q: "One morning after sunrise, Suresh was standing facing a pole. The shadow of the pole fell exactly to his right. To which direction was he facing?",
+                options: ["East", "West", "South", "North"],
+                ans: 2,
+                explanation: "In the morning, the sun is in the East, so shadows fall toward the West. If the shadow is to his right, his right side must be pointing West. Therefore, he is facing South."
+            },
+            {
+                q: "Which of the following fractions is the largest?",
+                options: ["7/8", "13/16", "31/40", "63/80"],
+                ans: 0,
+                explanation: "Convert to decimals or find a common denominator (80). 7/8 = 70/80; 13/16 = 65/80; 31/40 = 62/80; 63/80 = 63/80. The largest is 70/80, which is 7/8."
+            },
+            {
+                q: "What is the value of 0.333... in fractional form?",
+                options: ["1/2", "1/3", "3/10", "33/100"],
+                ans: 1,
+                explanation: "Let x = 0.333... Then 10x = 3.333... Subtracting the first from the second gives 9x = 3, so x = 3/9 = 1/3."
+            },
+            {
+                q: "The HCF and LCM of two numbers are 27 and 2079 respectively. If one of the numbers is 189, find the other number.",
+                options: ["297", "305", "312", "327"],
+                ans: 0,
+                explanation: "Formula: Product of two numbers = HCF × LCM. 189 × Second Number = 27 × 2079. Second Number = (27 × 2079) / 189 = 297."
+            },
+            {
+                q: "What is the unit digit in the product (122)^173?",
+                options: ["2", "4", "6", "8"],
+                ans: 0,
+                explanation: "The unit digit of 122 is 2. The powers of 2 follow a cycle of 4: 2, 4, 8, 6. Divide the exponent 173 by 4, the remainder is 1. Therefore, the unit digit is the 1st number in the cycle, which is 2."
+            },
+            {
+                q: "The average of 5 consecutive odd numbers is 61. What is the difference between the highest and lowest numbers?",
+                options: ["4", "6", "8", "10"],
+                ans: 2,
+                explanation: "Let the numbers be x, x+2, x+4, x+6, x+8. The average is the middle number, x+4 = 61. Lowest = 57, Highest = 65. Difference = 65 - 57 = 8."
+            },
+            {
+                q: "The average age of 30 students in a class is 15 years. If the teacher's age is included, the average increases by 1 year. What is the teacher's age?",
+                options: ["40", "42", "46", "50"],
+                ans: 2,
+                explanation: "Total age of 30 students = 30 × 15 = 450. Total age with teacher (31 people) = 31 × 16 = 496. Teacher's age = 496 - 450 = 46 years."
+            },
+            {
+                q: "A batsman has a certain average of runs for 11 innings. In the 12th inning, he scores 90 runs, thereby decreasing his average by 5. His average after the 12th inning is:",
+                options: ["135", "145", "150", "155"],
+                ans: 1,
+                explanation: "Let old average be x. Total runs for 11 innings = 11x. In 12th inning, total runs = 11x + 90. New average = x - 5. So, (11x + 90) / 12 = x - 5. 11x + 90 = 12x - 60, x = 150 (old average). New average = 150 - 5 = 145."
+            },
+            {
+                q: "Two numbers are in the ratio 3:5. If 9 is subtracted from each, the new numbers are in the ratio 12:23. The smaller number is:",
+                options: ["27", "33", "49", "55"],
+                ans: 1,
+                explanation: "Let numbers be 3x and 5x. (3x - 9)/(5x - 9) = 12/23. Cross multiply: 69x - 207 = 60x - 108. 9x = 99, x = 11. Smaller number = 3x = 33."
+            },
+            {
+                q: "A bag contains coins of Rs. 1, 50 paise, and 25 paise in the ratio 2:3:4. If the total amount in the bag is Rs. 180, find the number of 50 paise coins.",
+                options: ["100", "120", "140", "160"],
+                ans: 1,
+                explanation: "Values of coins in Rs are 1, 0.50, and 0.25. Value ratio = 2x(1) : 3x(0.5) : 4x(0.25) = 2x : 1.5x : 1x. Total value = 4.5x = 180. x = 40. Number of 50p coins = 3x = 3 × 40 = 120."
+            },
+            {
+                q: "In a mixture of 60 litres, the ratio of milk and water is 2:1. If this ratio is to be 1:2, then the quantity of water to be further added is:",
+                options: ["30 litres", "40 litres", "50 litres", "60 litres"],
+                ans: 3,
+                explanation: "Initially, milk = 40L, water = 20L. Let w litres of water be added. New ratio = 40 / (20 + w) = 1/2. 80 = 20 + w. w = 60 litres."
+            },
+            {
+                q: "The present ages of A and B are in the ratio 4:5. After 5 years, the ratio will become 5:6. The present age of A is:",
+                options: ["10 years", "20 years", "25 years", "30 years"],
+                ans: 1,
+                explanation: "Let ages be 4x and 5x. (4x + 5) / (5x + 5) = 5/6. 24x + 30 = 25x + 25. x = 5. A's present age = 4x = 4 × 5 = 20 years."
+            },
+            {
+                q: "A student has to secure 40% marks to pass. He gets 178 marks and fails by 22 marks. The maximum marks are:",
+                options: ["400", "450", "500", "550"],
+                ans: 2,
+                explanation: "Passing marks = 178 + 22 = 200. Let max marks be x. 40% of x = 200. (40/100)x = 200, so x = 200 × (100/40) = 500."
+            },
+            {
+                q: "In an election between two candidates, one got 55% of the total valid votes and 20% of the votes were invalid. If the total number of votes was 7500, what was the number of valid votes that the other candidate got?",
+                options: ["2700", "2900", "3000", "3100"],
+                ans: 0,
+                explanation: "Total valid votes = 80% of 7500 = 6000. Winning candidate got 55% of 6000. Other candidate got 45% of 6000. 45/100 × 6000 = 2700."
+            },
+            {
+                q: "A man's salary is first increased by 20% and then decreased by 20%. The net change in his salary is:",
+                options: ["No change", "4% decrease", "4% increase", "2% decrease"],
+                ans: 1,
+                explanation: "Net change = x + y + (xy/100) = 20 - 20 + ((20)(-20)/100) = 0 - 4 = -4%. It is a 4% decrease. Alternatively, 100 -> 120 -> 96."
+            },
+            {
+                q: "The population of a town increases by 10% annually. If its present population is 20,000, what will be its population after 2 years?",
+                options: ["22,000", "24,000", "24,200", "25,000"],
+                ans: 2,
+                explanation: "Population after 2 years = P(1 + r/100)^t = 20000(1 + 10/100)² = 20000(1.1)² = 20000 × 1.21 = 24,200."
+            },
+            {
+                q: "The cost price of 20 articles is the same as the selling price of x articles. If the profit is 25%, then the value of x is:",
+                options: ["15", "16", "18", "25"],
+                ans: 1,
+                explanation: "Let CP of 1 article = Rs 1. CP of x articles = x. SP of x articles = CP of 20 articles = 20. Profit = SP - CP = 20 - x. Profit% = ((20-x)/x) × 100 = 25. (20-x)/x = 1/4. 80 - 4x = x. 5x = 80, x = 16."
+            },
+            {
+                q: "A man sold two horses for Rs. 1000 each. On one he gained 10% and on the other he lost 10%. His total gain or loss percentage is:",
+                options: ["No profit no loss", "1% profit", "1% loss", "2% loss"],
+                ans: 2,
+                explanation: "When two identical SPs involve equal profit% and loss% (x), there is always a net loss of (x²/100)%. Loss = 10²/100 = 100/100 = 1% loss."
+            },
+            {
+                q: "A dishonest dealer professes to sell his goods at cost price, but he uses a weight of 900 grams for a kg weight. His gain percentage is:",
+                options: ["9%", "10%", "11.11%", "12.5%"],
+                ans: 2,
+                explanation: "He sells 900g and charges for 1000g. Gain = 100g on a cost of 900g. Gain% = (100/900) × 100 = 100/9 = 11.11% (or 11 1/9 %)."
+            },
+            {
+                q: "Successive discounts of 20% and 10% are equivalent to a single discount of:",
+                options: ["25%", "28%", "30%", "32%"],
+                ans: 1,
+                explanation: "Equivalent discount = a + b - (ab/100) = 20 + 10 - (200/100) = 30 - 2 = 28%."
+            },
+            {
+                q: "The marked price of an article is Rs. 500. A shopkeeper allows a discount of 10% and still makes a profit of 25%. What is the cost price of the article?",
+                options: ["320", "350", "360", "400"],
+                ans: 2,
+                explanation: "Selling Price (SP) = MP - Discount = 500 - 10%(500) = 450. Profit = 25%, so SP = 1.25 × CP. 450 = 1.25 × CP. CP = 450 / 1.25 = 360."
+            },
+            {
+                q: "At what rate of simple interest per annum will a sum of money double itself in 10 years?",
+                options: ["8%", "10%", "12%", "15%"],
+                ans: 1,
+                explanation: "Let the sum be P. Amount = 2P, so Simple Interest (SI) = 2P - P = P. SI = (P × R × T) / 100. P = (P × R × 10) / 100. 10R = 100, R = 10%."
+            },
+            {
+                q: "A sum of money amounts to Rs. 9800 after 5 years and Rs. 12005 after 8 years at the same rate of simple interest. The rate of interest per annum is:",
+                options: ["10%", "11%", "12%", "15%"],
+                ans: 2,
+                explanation: "SI for 3 years = 12005 - 9800 = 2205. SI for 1 year = 2205 / 3 = 735. SI for 5 years = 735 × 5 = 3675. Principal = 9800 - 3675 = 6125. Rate = (SI × 100) / (P × T) = (735 × 100) / (6125 × 1) = 12%."
+            },
+            {
+                q: "The compound interest on Rs. 10,000 for 2 years at 10% per annum is:",
+                options: ["Rs. 2000", "Rs. 2100", "Rs. 2200", "Rs. 2500"],
+                ans: 1,
+                explanation: "Amount = P(1 + r/100)^t = 10000(1.1)² = 10000 × 1.21 = 12100. Compound Interest = Amount - Principal = 12100 - 10000 = 2100."
+            },
+            {
+                q: "The difference between simple interest and compound interest on a certain sum for 2 years at 5% per annum is Rs. 15. What is the sum?",
+                options: ["Rs. 4000", "Rs. 5000", "Rs. 6000", "Rs. 7000"],
+                ans: 2,
+                explanation: "Difference for 2 years = P(r/100)². 15 = P(5/100)². 15 = P(1/400). P = 15 × 400 = Rs. 6000."
+            },
+            {
+                q: "A can do a piece of work in 15 days and B can do it in 20 days. If they work together for 4 days, what fraction of the work is left?",
+                options: ["8/15", "7/15", "1/4", "1/2"],
+                ans: 0,
+                explanation: "A's 1 day work = 1/15. B's 1 day work = 1/20. Together 1 day work = 1/15 + 1/20 = 7/60. Work done in 4 days = 4 × (7/60) = 28/60 = 7/15. Work left = 1 - 7/15 = 8/15."
+            },
+            {
+                q: "A is twice as good a workman as B and together they finish a piece of work in 14 days. The number of days taken by A alone to finish the work is:",
+                options: ["21 days", "28 days", "30 days", "42 days"],
+                ans: 0,
+                explanation: "Efficiency of A:B = 2:1. Total efficiency = 3 units/day. Total work = 3 × 14 = 42 units. A's time to finish alone = Total Work / A's Efficiency = 42 / 2 = 21 days."
+            },
+            {
+                q: "A can do a work in 10 days, B in 15 days. They work together for 2 days and then A leaves. In how many days will B finish the remaining work?",
+                options: ["8 days", "10 days", "12 days", "15 days"],
+                ans: 1,
+                explanation: "Total work LCM(10, 15) = 30 units. A's rate = 3 units/d, B's rate = 2 units/d. Together = 5 units/d. In 2 days they do 10 units. Remaining work = 20 units. B finishes it in 20/2 = 10 days."
+            },
+            {
+                q: "Pipe A can fill a tank in 10 hours and Pipe B can empty it in 15 hours. If both are opened together, the tank will be filled in:",
+                options: ["12 hours", "20 hours", "25 hours", "30 hours"],
+                ans: 3,
+                explanation: "Net filling in 1 hour = (1/10) - (1/15) = (3 - 2)/30 = 1/30. So, it will take 30 hours to completely fill the tank."
+            },
+            {
+                q: "A man travels from A to B at 40 km/hr and returns from B to A at 60 km/hr. Find his average speed for the whole journey.",
+                options: ["48 km/hr", "50 km/hr", "52 km/hr", "54 km/hr"],
+                ans: 0,
+                explanation: "Average speed = (2xy) / (x + y) = (2 × 40 × 60) / (40 + 60) = 4800 / 100 = 48 km/hr."
+            },
+            {
+                q: "Walking at 3/4 of his usual speed, a man is 20 minutes late to his office. His usual time to reach the office is:",
+                options: ["40 minutes", "45 minutes", "60 minutes", "75 minutes"],
+                ans: 2,
+                explanation: "Speed becomes 3/4, so time becomes 4/3. Time difference = (4/3)T - T = T/3. We are given T/3 = 20 minutes. Usual time T = 60 minutes."
+            },
+            {
+                q: "A train 120 meters long is running at a speed of 54 km/hr. In what time will it pass a standing man?",
+                options: ["6 seconds", "8 seconds", "10 seconds", "12 seconds"],
+                ans: 1,
+                explanation: "Speed in m/s = 54 × (5/18) = 15 m/s. Distance = length of train = 120 m. Time = Distance / Speed = 120 / 15 = 8 seconds."
+            },
+            {
+                q: "A train 150m long passes a 250m long bridge in 20 seconds. What is the speed of the train?",
+                options: ["60 km/hr", "72 km/hr", "80 km/hr", "90 km/hr"],
+                ans: 1,
+                explanation: "Total distance = 150 + 250 = 400m. Time = 20s. Speed = 400/20 = 20 m/s. To convert to km/hr, multiply by 18/5: 20 × 18/5 = 72 km/hr."
+            },
+            {
+                q: "Two trains 140m and 160m long run at speeds of 60 km/hr and 40 km/hr respectively in opposite directions. Time taken to cross each other is:",
+                options: ["9.8 seconds", "10.8 seconds", "11.2 seconds", "12 seconds"],
+                ans: 1,
+                explanation: "Total distance = 140 + 160 = 300m. Relative speed = 60 + 40 = 100 km/hr = 100 × (5/18) = 250/9 m/s. Time = Distance / Speed = 300 / (250/9) = 2700 / 250 = 10.8 seconds."
+            },
+            {
+                q: "A boat can travel with a speed of 13 km/hr in still water. If the speed of the stream is 4 km/hr, find the time taken by the boat to go 68 km downstream.",
+                options: ["2 hours", "3 hours", "4 hours", "5 hours"],
+                ans: 2,
+                explanation: "Downstream speed = Speed of boat + Speed of stream = 13 + 4 = 17 km/hr. Time = Distance / Speed = 68 / 17 = 4 hours."
+            },
+            {
+                q: "What is the angle between the hour hand and the minute hand of a clock at 3:30?",
+                options: ["65 degrees", "70 degrees", "75 degrees", "80 degrees"],
+                ans: 2,
+                explanation: "Angle = |30H - 5.5M|. H = 3, M = 30. |30(3) - 5.5(30)| = |90 - 165| = |-75| = 75 degrees."
+            },
+            {
+                q: "If it was Sunday on January 1, 2006, what was the day of the week on January 1, 2010?",
+                options: ["Wednesday", "Thursday", "Friday", "Saturday"],
+                ans: 2,
+                explanation: "Odd days from 2006 to 2009: 2006 (1), 2007 (1), 2008 (leap, 2), 2009 (1). Total odd days = 5. Sunday + 5 days = Friday."
+            }
+        ];
+
+        let currentQuestion = 0;
+        let userAnswers = new Array(quizData.length).fill(null);
+        let timeLeft = 3600; // 60 minutes
+        let timerInterval;
+
+        function init() {
+            renderGrid();
+        }
+
+        function startTest() {
+            document.getElementById('start-screen').classList.add('hidden');
+            document.getElementById('quiz-screen').classList.remove('hidden');
+            document.getElementById('header-timer-container').classList.remove('hidden');
+            document.getElementById('header-timer-container').classList.add('flex');
+            
+            timerInterval = setInterval(updateTimer, 1000);
+            renderQuestion(currentQuestion);
+        }
+
+        function updateTimer() {
+            if (timeLeft <= 0) {
+                clearInterval(timerInterval);
+                executeSubmit();
+                return;
+            }
+            timeLeft--;
+            
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            
+            const timeString = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            document.getElementById('header-timer').innerText = timeString;
+
+            if(timeLeft < 300) { // Under 5 minutes turns red
+                document.getElementById('header-timer-container').classList.remove('bg-slate-100', 'border-slate-200');
+                document.getElementById('header-timer-container').classList.add('bg-red-50', 'border-red-200');
+                document.getElementById('header-timer').classList.remove('text-slate-700');
+                document.getElementById('header-timer').classList.add('text-red-600');
+                document.querySelector('.fa-clock').classList.remove('text-sky-600');
+                document.querySelector('.fa-clock').classList.add('text-red-500');
+            }
+        }
+
+        function renderQuestion(index) {
+            const qData = quizData[index];
+            
+            document.getElementById('question-number-badge').innerText = `Question ${index + 1} of ${quizData.length}`;
+            document.getElementById('question-text').innerText = qData.q;
+            
+            const progressPercentage = ((index + 1) / quizData.length) * 100;
+            document.getElementById('progress-bar').style.width = `${progressPercentage}%`;
+
+            const optionsContainer = document.getElementById('options-container');
+            optionsContainer.innerHTML = '';
+            
+            const optionLetters = ['A', 'B', 'C', 'D'];
+            
+            qData.options.forEach((opt, optIndex) => {
+                const isSelected = userAnswers[index] === optIndex;
+                
+                const optionHtml = `
+                    <label class="option-label cursor-pointer flex items-center p-4 border rounded-xl transition-all duration-200 ${isSelected ? 'option-selected' : 'border-slate-200 bg-white hover:bg-slate-50'}" onclick="selectOption(${index}, ${optIndex})">
+                        <div class="flex-shrink-0 w-8 h-8 rounded-full border-2 flex items-center justify-center font-bold mr-4 ${isSelected ? 'border-sky-600 text-sky-600 bg-white' : 'border-slate-300 text-slate-500'}">
+                            ${optionLetters[optIndex]}
+                        </div>
+                        <div class="text-slate-700 ${isSelected ? 'font-medium text-sky-900' : ''}">
+                            ${opt}
+                        </div>
+                        <div class="ml-auto flex-shrink-0">
+                            <input type="radio" name="q${index}" value="${optIndex}" class="hidden" ${isSelected ? 'checked' : ''}>
+                            <div class="w-5 h-5 rounded-full border-2 flex items-center justify-center ${isSelected ? 'border-sky-600' : 'border-slate-300'}">
+                                ${isSelected ? '<div class="w-2.5 h-2.5 bg-sky-600 rounded-full"></div>' : ''}
+                            </div>
+                        </div>
+                    </label>
+                `;
+                optionsContainer.insertAdjacentHTML('beforeend', optionHtml);
+            });
+
+            document.getElementById('btn-prev').disabled = index === 0;
+            const btnNext = document.getElementById('btn-next');
+            
+            if (index === quizData.length - 1) {
+                btnNext.innerHTML = 'Save & Review <i class="fa-solid fa-list-check ml-2"></i>';
+                btnNext.classList.remove('bg-sky-600', 'hover:bg-sky-700');
+                btnNext.classList.add('bg-amber-500', 'hover:bg-amber-600', 'shadow-amber-200');
+            } else {
+                btnNext.innerHTML = 'Save & Next <i class="fa-solid fa-angle-right ml-2"></i>';
+                btnNext.classList.add('bg-sky-600', 'hover:bg-sky-700');
+                btnNext.classList.remove('bg-amber-500', 'hover:bg-amber-600', 'shadow-amber-200');
+            }
+
+            updateGridSelection(index);
+        }
+
+        function selectOption(qIndex, optIndex) {
+            userAnswers[qIndex] = optIndex;
+            renderQuestion(qIndex);
+            updateGridState();
+        }
+
+        function nextQuestion() {
+            if (currentQuestion < quizData.length - 1) {
+                currentQuestion++;
+                renderQuestion(currentQuestion);
+            } else {
+                if(window.innerWidth < 768) toggleMobileGrid(true);
+            }
+        }
+
+        function prevQuestion() {
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                renderQuestion(currentQuestion);
+            }
+        }
+
+        function jumpToQuestion(index) {
+            currentQuestion = index;
+            renderQuestion(currentQuestion);
+            if(window.innerWidth < 768) toggleMobileGrid(false);
+        }
+
+        function renderGrid() {
+            const grid = document.getElementById('question-grid');
+            grid.innerHTML = '';
+            for (let i = 0; i < quizData.length; i++) {
+                grid.innerHTML += `
+                    <button onclick="jumpToQuestion(${i})" id="grid-btn-${i}" class="w-10 h-10 sm:w-11 sm:h-11 rounded-lg border border-slate-300 font-semibold text-sm flex items-center justify-center transition-all hover:bg-slate-100 text-slate-600">
+                        ${i + 1}
+                    </button>
+                `;
+            }
+            updateGridState();
+        }
+
+        function updateGridState() {
+            for (let i = 0; i < quizData.length; i++) {
+                const btn = document.getElementById(`grid-btn-${i}`);
+                if (userAnswers[i] !== null) {
+                    btn.classList.add('grid-btn-answered');
+                    btn.classList.remove('border-slate-300', 'text-slate-600', 'bg-white');
+                }
+            }
+        }
+
+        function updateGridSelection(index) {
+            for (let i = 0; i < quizData.length; i++) {
+                document.getElementById(`grid-btn-${i}`).classList.remove('grid-btn-current');
+            }
+            document.getElementById(`grid-btn-${index}`).classList.add('grid-btn-current');
+        }
+
+        function toggleMobileGrid(forceState = null) {
+            const gridContainer = document.getElementById('grid-container');
+            if(forceState === true) gridContainer.classList.remove('hidden');
+            else if (forceState === false) gridContainer.classList.add('hidden');
+            else gridContainer.classList.toggle('hidden');
+        }
+
+        function confirmSubmit() {
+            const unanswered = userAnswers.filter(a => a === null).length;
+            const modal = document.getElementById('custom-modal');
+            const desc = document.getElementById('modal-desc');
+
+            if (unanswered > 0) {
+                desc.innerHTML = `You still have <strong>${unanswered} unanswered</strong> questions. Are you sure you want to submit?`;
+            } else {
+                desc.innerHTML = "You have answered all questions. Ready to submit and see your score?";
+            }
+
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                document.getElementById('modal-content').classList.remove('scale-95', 'opacity-0');
+                document.getElementById('modal-content').classList.add('scale-100', 'opacity-100');
+            }, 10);
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('custom-modal');
+            document.getElementById('modal-content').classList.remove('scale-100', 'opacity-100');
+            document.getElementById('modal-content').classList.add('scale-95', 'opacity-0');
+            setTimeout(() => modal.classList.add('hidden'), 200);
+        }
+
+        function executeSubmit() {
+            clearInterval(timerInterval);
+            closeModal();
+            
+            document.getElementById('quiz-screen').classList.add('hidden');
+            document.getElementById('header-timer-container').classList.add('hidden');
+            document.getElementById('results-screen').classList.remove('hidden');
+            
+            calculateAndRenderResults();
+        }
+
+        function calculateAndRenderResults() {
+            let correct = 0;
+            let incorrect = 0;
+            let skipped = 0;
+            const optionLetters = ['A', 'B', 'C', 'D'];
+
+            const reviewContainer = document.getElementById('review-container');
+            reviewContainer.innerHTML = '';
+
+            quizData.forEach((qData, index) => {
+                const userAns = userAnswers[index];
+                const isCorrect = userAns === qData.ans;
+                const isSkipped = userAns === null;
+
+                if (isCorrect) correct++;
+                else if (isSkipped) skipped++;
+                else incorrect++;
+
+                let statusBadge = '';
+                let borderClass = '';
+                
+                if (isCorrect) {
+                    statusBadge = '<span class="px-2.5 py-1 bg-emerald-100 text-emerald-700 text-xs font-bold rounded-full border border-emerald-200"><i class="fa-solid fa-check mr-1"></i> Correct (+2)</span>';
+                    borderClass = 'border-l-4 border-l-emerald-500';
+                } else if (isSkipped) {
+                    statusBadge = '<span class="px-2.5 py-1 bg-slate-100 text-slate-600 text-xs font-bold rounded-full border border-slate-200"><i class="fa-solid fa-minus mr-1"></i> Skipped (0)</span>';
+                    borderClass = 'border-l-4 border-l-slate-400';
+                } else {
+                    statusBadge = '<span class="px-2.5 py-1 bg-red-100 text-red-700 text-xs font-bold rounded-full border border-red-200"><i class="fa-solid fa-xmark mr-1"></i> Incorrect (0)</span>';
+                    borderClass = 'border-l-4 border-l-red-500';
+                }
+
+                let optionsHtml = '<div class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-2">';
+                qData.options.forEach((opt, optIndex) => {
+                    let optBg = 'bg-slate-50 border-slate-200';
+                    let icon = '';
+                    
+                    if (optIndex === qData.ans) {
+                        optBg = 'bg-emerald-50 border-emerald-300 text-emerald-800 font-medium shadow-sm';
+                        icon = '<i class="fa-solid fa-circle-check text-emerald-500 ml-auto"></i>';
+                    } else if (optIndex === userAns && !isCorrect) {
+                        optBg = 'bg-red-50 border-red-200 text-red-800';
+                        icon = '<i class="fa-solid fa-circle-xmark text-red-500 ml-auto"></i>';
+                    }
+
+                    optionsHtml += `
+                        <div class="p-3 border rounded-lg text-sm flex items-center ${optBg}">
+                            <span class="font-bold mr-2 opacity-70">${optionLetters[optIndex]}.</span> ${opt} ${icon}
+                        </div>
+                    `;
+                });
+                optionsHtml += '</div>';
+
+                // Explanation Block
+                const explanationHtml = `
+                    <div class="mt-4 p-4 bg-sky-50 border border-sky-100 rounded-lg text-sm text-sky-900 shadow-inner">
+                        <span class="font-bold text-sky-700 block mb-1"><i class="fa-solid fa-lightbulb mr-1"></i> Explanation:</span>
+                        <p class="text-slate-700 leading-relaxed">${qData.explanation}</p>
+                    </div>
+                `;
+
+                const cardHtml = `
+                    <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 sm:p-6 ${borderClass}">
+                        <div class="flex justify-between items-start mb-3 gap-4">
+                            <h4 class="font-semibold text-slate-800 text-base leading-snug"><span class="text-slate-400 mr-1">Q${index + 1}.</span> ${qData.q}</h4>
+                            <div class="flex-shrink-0">${statusBadge}</div>
+                        </div>
+                        ${optionsHtml}
+                        ${explanationHtml}
+                    </div>
+                `;
+                reviewContainer.insertAdjacentHTML('beforeend', cardHtml);
+            });
+
+            const totalScore = correct * 2;
+            animateValue("score-text", 0, totalScore, 1000);
+            
+            document.getElementById('correct-count').innerText = correct;
+            document.getElementById('incorrect-count').innerText = incorrect;
+            document.getElementById('skipped-count').innerText = skipped;
+        }
+
+        function animateValue(id, start, end, duration) {
+            if (start === end) return;
+            var range = end - start;
+            var current = start;
+            var increment = end > start ? 1 : -1;
+            var stepTime = Math.abs(Math.floor(duration / range));
+            var obj = document.getElementById(id);
+            var timer = setInterval(function() {
+                current += increment;
+                obj.innerHTML = current;
+                if (current == end) {
+                    clearInterval(timer);
+                }
+            }, stepTime);
+        }
+
+        window.onload = init;
+    </script>
+</body>
+</html>
